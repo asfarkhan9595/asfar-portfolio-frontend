@@ -80,9 +80,9 @@ export default function Projects({ projects }) {
               <div>
                 {/* Image Container */}
                 <div className="relative aspect-video w-full overflow-hidden bg-slate-900 border-b border-slate-200 dark:border-white/10">
-                  {project.cover_image ? (
+                  { (project.cover_image || (project.images && project.images.length > 0 ? project.images[0].image_path : null)) ? (
                     <img
-                      src={project.cover_image}
+                      src={project.cover_image || project.images[0].image_path}
                       alt={project.title}
                       className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />

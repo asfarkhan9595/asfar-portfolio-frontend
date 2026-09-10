@@ -13,9 +13,9 @@ export default function ProjectCard({ project, onViewDetails, index = 0 }) {
 
   const categoryName = typeof project.category === 'object' ? project.category?.name : project.category;
   
-  // Prioritize uploaded gallery images first (same logic as ProjectModal), then cover_image fallback
+  // Prioritize cover_image first, then uploaded gallery images fallback
   const firstGalleryImg = project.images && project.images.length > 0 ? project.images[0].image_path : null;
-  const rawCover = firstGalleryImg || project.cover_image || null;
+  const rawCover = project.cover_image || firstGalleryImg || null;
   const coverImg = !imgError && rawCover ? rawCover : null;
 
   return (

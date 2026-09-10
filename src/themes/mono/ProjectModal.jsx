@@ -38,7 +38,7 @@ export default function MonoProjectModal({ project, onClose }) {
 
   const whatILearned = project.what_i_learned || project.whatILearned;
   const projectImages = project.images || [];
-  const activeMainImg = selectedImg || (projectImages.length > 0 ? projectImages[0].image_path : project.cover_image);
+  const activeMainImg = selectedImg || project.cover_image || (projectImages.length > 0 ? projectImages[0].image_path : null);
 
   return (
     <AnimatePresence>
