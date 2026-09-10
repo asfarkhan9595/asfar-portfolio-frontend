@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary Meta -->
+    <title>Asfar Khan — Portfolio</title>
+    <meta name="description" content="Asfar Khan is a Python & AI Automation Developer building practical AI-powered applications, backend systems, APIs, Chrome extensions, and automation tools." />
+    <meta name="keywords" content="Python Developer, AI Automation, Backend Developer, API Developer, Chrome Extension Developer, Laravel, REST API, OpenAI, LLM" />
+    <meta name="author" content="Asfar Khan" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Asfar Khan — Portfolio" />
+    <meta property="og:description" content="Asfar Khan is a Python & AI Automation Developer building practical AI-powered applications, backend systems, APIs, Chrome extensions, and automation tools." />
+    <meta property="og:site_name" content="Asfar Khan Portfolio" />
+
+    <!-- Twitter/X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Asfar Khan — Python & AI Automation Developer" />
+    <meta name="twitter:description" content="Asfar Khan is a Python & AI Automation Developer building practical AI-powered applications, backend systems, APIs, Chrome extensions, and automation tools." />
+
+    <!-- Preload font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Prevent flash of wrong theme -->
+    <script>
+      (function() {
+        var theme = localStorage.getItem('theme');
+        if (theme === 'light') {
+          document.documentElement.classList.remove('dark');
+        } else if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+            document.documentElement.classList.remove('dark');
+          }
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

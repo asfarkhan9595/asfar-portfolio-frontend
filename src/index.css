@@ -1,0 +1,396 @@
+@import "tailwindcss";
+
+/* Enable class-based dark mode (toggle via .dark on <html>) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --primary-color: #10b981;
+}
+
+@theme {
+  --color-surface: #0f172a;
+  --color-surface-alt: #1e293b;
+  --color-accent: var(--primary-color, #10b981);
+  --color-accent-hover: var(--primary-color, #059669);
+}
+
+/* ============================================
+   DYNAMIC PRIMARY COLOR ACCENT OVERRIDES
+   ============================================ */
+
+.bg-emerald-500,
+.bg-emerald-600 {
+  background-color: var(--primary-color, #10b981) !important;
+}
+
+.hover\:bg-emerald-600:hover,
+.hover\:bg-emerald-500:hover {
+  filter: brightness(0.9);
+}
+
+.text-emerald-500,
+.text-emerald-600,
+.text-emerald-400 {
+  color: var(--primary-color, #10b981) !important;
+}
+
+.border-emerald-500,
+.border-emerald-600 {
+  border-color: var(--primary-color, #10b981) !important;
+}
+
+.bg-emerald-500\/10 {
+  background-color: color-mix(in srgb, var(--primary-color, #10b981) 12%, transparent) !important;
+}
+
+.bg-emerald-500\/20 {
+  background-color: color-mix(in srgb, var(--primary-color, #10b981) 20%, transparent) !important;
+}
+
+.border-emerald-500\/20,
+.border-emerald-500\/30,
+.border-emerald-500\/40,
+.border-emerald-500\/50 {
+  border-color: color-mix(in srgb, var(--primary-color, #10b981) 30%, transparent) !important;
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Light mode defaults */
+body {
+  background-color: #ffffff;
+  color: #0f172a;
+}
+
+/* Dark mode overrides */
+.dark body {
+  background-color: #020617;
+  color: #f8fafc;
+}
+
+/* ============================================
+   SELECTION
+   ============================================ */
+
+::selection {
+  background-color: var(--primary-color, #10b981);
+  color: #ffffff;
+}
+
+/* ============================================
+   SCROLLBAR (subtle in dark mode)
+   ============================================ */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* ============================================
+   ANIMATIONS & EFFECTS
+   ============================================ */
+
+/* Gradient text effect */
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary-color, #10b981) 0%, #34d399 40%, #f8fafc 80%, #f8fafc 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-shift 6s ease infinite;
+}
+
+.dark .gradient-text {
+  background: linear-gradient(135deg, var(--primary-color, #10b981) 0%, #34d399 40%, #f8fafc 80%, #f8fafc 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Light mode gradient */
+:not(.dark) .gradient-text {
+  background: linear-gradient(135deg, var(--primary-color, #10b981) 0%, #059669 40%, #0f172a 80%, #0f172a 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Button shimmer */
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.15),
+    transparent
+  );
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { left: -100%; }
+  50%, 100% { left: 150%; }
+}
+
+/* Floating animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float 8s ease-in-out 2s infinite;
+}
+
+/* Subtle pulse glow */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.05); }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 4s ease-in-out infinite;
+}
+
+/* Grid background pattern */
+.bg-grid-pattern {
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+.dark .bg-grid-pattern {
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* Gradient orb (decorative backgrounds) */
+.gradient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+}
+
+/* Card hover glow */
+.card-glow {
+  position: relative;
+  transition: all 0.4s ease;
+}
+
+.card-glow::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, transparent 40%, #10b98130 50%, transparent 60%);
+  background-size: 300% 300%;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.4s ease, background-position 0.4s ease;
+}
+
+.card-glow:hover::before {
+  opacity: 1;
+  background-position: 50% 50%;
+}
+
+/* Animated border gradient */
+.animated-border {
+  position: relative;
+  overflow: hidden;
+}
+
+.animated-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, transparent, #10b98140, transparent, #10b98120);
+  background-size: 300% 300%;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  animation: border-rotate 4s linear infinite;
+}
+
+.animated-border:hover::before {
+  opacity: 1;
+}
+
+@keyframes border-rotate {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Typing cursor */
+.typing-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background-color: #10b981;
+  margin-left: 2px;
+  animation: cursor-blink 1s step-end infinite;
+  vertical-align: middle;
+}
+
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Code line animation */
+@keyframes code-appear {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.code-line {
+  animation: code-appear 0.4s ease forwards;
+  opacity: 0;
+}
+
+/* Skill tag hover float */
+.skill-tag {
+  transition: all 0.25s ease;
+}
+
+.skill-tag:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+}
+
+/* Smooth section divider */
+.section-divider {
+  position: relative;
+}
+
+.section-divider::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #10b981, transparent);
+  opacity: 0.4;
+}
+
+/* ============================================
+   REDUCED MOTION
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .gradient-text {
+    animation: none;
+    -webkit-text-fill-color: currentColor;
+    background: none;
+  }
+}
+
+/* ============================================
+   LINE CLAMP UTILITY
+   ============================================ */
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ============================================
+   GLASSMORPHISM THEME TOKENS & BACKGROUNDS
+   ============================================ */
+
+/* Glass Light Mode */
+[data-theme="glass"]:not(.dark) body {
+  background-color: #f1f5f9;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.15) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.12) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(6, 182, 212, 0.15) 0px, transparent 50%);
+  background-attachment: fixed;
+}
+
+/* Glass Dark Mode */
+[data-theme="glass"].dark body {
+  background-color: #060913;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(6, 182, 212, 0.15) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.15) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(59, 130, 246, 0.1) 0px, transparent 50%);
+  background-attachment: fixed;
+  color: #f8fafc;
+}
+
+
+
+
