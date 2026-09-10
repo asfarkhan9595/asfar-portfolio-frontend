@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Calendar, Clock, Eye, Tag, Share2, Check, BookOpen, ExternalLink, List, ChevronLeft, ChevronRight, Flame, Terminal } from 'lucide-react';
 import { TwitterIcon, LinkedinIcon } from '../../components/Icons';
+import { API_BASE_URL } from '../../config/api';
 import Navbar from './Navbar';
 import Footer from './Footer';
 
@@ -18,7 +19,7 @@ export default function MonoBlogPostDetail({ slug, posts, profile, settings, onN
       setPost(found);
       setLoading(false);
     } else {
-      fetch(`http://localhost:8000/api/v1/posts/${slug}`)
+      fetch(`${API_BASE_URL}/posts/${slug}`)
         .then(res => res.json())
         .then(resData => {
           if (resData.success && resData.data) {

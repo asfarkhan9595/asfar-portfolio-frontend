@@ -5,8 +5,7 @@ import Container from '../../components/Container';
 import SectionHeading from '../../components/SectionHeading';
 import Button from '../../components/Button';
 import { getSocialIcon } from '../../components/SocialLinks';
-
-const API_BASE_URL = 'http://localhost:8000/api/v1';
+import { API_BASE_URL } from '../../config/api';
 
 export default function Contact({ profile, socialLinks = [], contactSettings = null }) {
   const prefersReducedMotion = useReducedMotion();

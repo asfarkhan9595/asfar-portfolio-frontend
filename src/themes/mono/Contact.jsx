@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, MapPin, Send, CheckCircle2, AlertCircle, Terminal } from 'lucide-react';
+import { API_BASE_URL } from '../../config/api';
 
 export default function Contact({ profile, socialLinks, contactSettings }) {
   const [formData, setFormData] = useState({
@@ -23,7 +24,7 @@ export default function Contact({ profile, socialLinks, contactSettings }) {
     setStatus({ loading: true, success: false, error: null });
 
     try {
-      const response = await fetch('http://localhost:8000/api/v1/contact', {
+      const response = await fetch(`${API_BASE_URL}/contact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

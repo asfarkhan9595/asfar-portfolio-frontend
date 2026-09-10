@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import ThemeRenderer from './themes/ThemeRenderer';
 import MaintenanceMode from './components/MaintenanceMode';
-
-const API_BASE_URL = 'http://localhost:8000/api/v1';
+import { API_BASE_URL } from './config/api';
 
 export default function App() {
   const [data, setData] = useState({ profile: null, skills: null, projects: null, experience: null, socialLinks: [], contactSettings: null, settings: null, posts: [] });

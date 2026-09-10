@@ -1,5 +1,6 @@
 import { Wrench, Mail, ShieldAlert, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { API_BASE_URL } from '../config/api';
 
 export default function MaintenanceMode({ settings, profile }) {
   const adminEmail = settings?.admin_email || 'asfarkhan9595@gmail.com';
@@ -56,7 +57,7 @@ export default function MaintenanceMode({ settings, profile }) {
           </a>
 
           <a
-            href="http://localhost:8000/admin"
+            href={`${API_BASE_URL.replace('/api/v1', '')}/admin`}
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-sm transition-colors shadow-lg shadow-amber-500/20"
           >
             <ShieldAlert className="w-4 h-4" />
