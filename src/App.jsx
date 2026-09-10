@@ -89,13 +89,10 @@ export default function App() {
     });
   }, []);
 
-  const [themeKey, setThemeKey] = useState(() => {
-    return localStorage.getItem('frontend_active_theme') || null;
-  });
+  const [themeOverride, setThemeOverride] = useState(null);
 
   const handleThemeChange = (newTheme) => {
-    setThemeKey(newTheme);
-    localStorage.setItem('frontend_active_theme', newTheme);
+    setThemeOverride(newTheme);
     document.documentElement.setAttribute('data-theme', newTheme);
   };
 
@@ -110,7 +107,7 @@ export default function App() {
     return <MaintenanceMode settings={data.settings} />;
   }
 
-  const effectiveTheme = themeKey || data.settings?.active_theme || 'modern';
+  const effectiveTheme = themeOverride || data.settings?.active_theme || 'modern';
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans transition-colors duration-300">
