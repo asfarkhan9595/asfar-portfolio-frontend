@@ -38,7 +38,18 @@ export default function GlassProjectModal({ project, onClose }) {
 
   const whatILearned = project.what_i_learned || project.whatILearned;
   const projectImages = project.images || [];
-  const activeMainImg = selectedImg || project.cover_image || (projectImages.length > 0 ? projectImages[0].image_path : null);
+  const allImages = [];
+  if (project.cover_image) {
+    allImages.push({ id: 'cover', image_path: project.cover_image });
+  }
+  if (projectImages.length > 0) {
+    projectImages.forEach((img, idx) => {
+      if (img.image_path !== project.cover_image) {
+        allImages.push({ id: img.id || idx, image_path: img.image_path });
+      }
+    });
+  }
+  const activeMainImg = selectedImg || (allImages.length > 0 ? allImages[0].image_path : null);
 
   return (
     <AnimatePresence>
@@ -94,7 +105,7 @@ export default function GlassProjectModal({ project, onClose }) {
               </div>
 
               {/* Main Screenshot Display */}
-              <div className="mb-6 overflow-hidden rounded-2xl border border-white/60 dark:border-white/10 bg-white/40 dark:bg-slate-800/40 backdrop-blur-md">
+              <div className="mb-4 overflow-hidden rounded-2xl border border-white/60 dark:border-white/10 bg-white/40 dark:bg-slate-800/40 backdrop-blur-md">
                 {activeMainImg ? (
                   <div className="relative aspect-video w-full overflow-hidden">
                     <img
@@ -110,6 +121,33 @@ export default function GlassProjectModal({ project, onClose }) {
                   </div>
                 )}
               </div>
+
+              {/* Gallery Thumbnails Selector */}
+              {allImages.length > 1 && (
+                <div className="mb-6 flex gap-2.5 overflow-x-auto pb-2">
+                  {allImages.map((img, idx) => {
+                    const isSelected = activeMainImg === img.image_path;
+                    return (
+                      <button
+                        key={img.id || idx}
+                        type="button"
+                        onClick={() => setSelectedImg(img.image_path)}
+                        className={`relative flex-shrink-0 h-16 w-24 overflow-hidden rounded-xl border-2 transition-all backdrop-blur-md ${
+                          isSelected
+                            ? 'border-cyan-500 ring-2 ring-cyan-500/30 scale-105 opacity-100'
+                            : 'border-white/40 dark:border-white/10 opacity-70 hover:opacity-100 hover:border-cyan-400/50'
+                        }`}
+                      >
+                        <img
+                          src={img.image_path}
+                          alt={`Thumbnail ${idx + 1}`}
+                          className="h-full w-full object-cover"
+                        />
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
 
               {/* Description / Overview */}
               {project.short_description && (

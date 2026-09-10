@@ -38,7 +38,18 @@ export default function MonoProjectModal({ project, onClose }) {
 
   const whatILearned = project.what_i_learned || project.whatILearned;
   const projectImages = project.images || [];
-  const activeMainImg = selectedImg || project.cover_image || (projectImages.length > 0 ? projectImages[0].image_path : null);
+  const allImages = [];
+  if (project.cover_image) {
+    allImages.push({ id: 'cover', image_path: project.cover_image });
+  }
+  if (projectImages.length > 0) {
+    projectImages.forEach((img, idx) => {
+      if (img.image_path !== project.cover_image) {
+        allImages.push({ id: img.id || idx, image_path: img.image_path });
+      }
+    });
+  }
+  const activeMainImg = selectedImg || (allImages.length > 0 ? allImages[0].image_path : null);
 
   return (
     <AnimatePresence>
