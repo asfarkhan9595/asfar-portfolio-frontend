@@ -127,15 +127,41 @@ export default function MonoProjectModal({ project, onClose }) {
               )}
             </div>
 
-            {/* Description */}
-            <div className="mb-6">
-              <h3 className="mb-2 text-xs font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider">
-                // System Summary
-              </h3>
-              <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-sans">
-                {project.description || project.long_description}
-              </p>
-            </div>
+            {/* System Summary / Overview */}
+            { (project.short_description || project.description) && (
+              <div className="mb-6">
+                <h3 className="mb-2 text-xs font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider">
+                  // System Summary
+                </h3>
+                <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-sans">
+                  {project.short_description || project.description}
+                </p>
+              </div>
+            )}
+
+            {/* Problem */}
+            {project.problem && (
+              <div className="mb-6">
+                <h3 className="mb-2 text-xs font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider">
+                  // Problem Statement
+                </h3>
+                <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-sans">
+                  {project.problem}
+                </p>
+              </div>
+            )}
+
+            {/* Solution */}
+            {project.solution && (
+              <div className="mb-6">
+                <h3 className="mb-2 text-xs font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider">
+                  // Proposed Solution
+                </h3>
+                <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-sans">
+                  {project.solution}
+                </p>
+              </div>
+            )}
 
             {/* Architecture Diagram */}
             {archLayers.length > 0 && (
@@ -148,22 +174,54 @@ export default function MonoProjectModal({ project, onClose }) {
               </div>
             )}
 
-            {/* Tech Stack Pills */}
-            {project.tech_stack && project.tech_stack.length > 0 && (
+            {/* Key Features */}
+            {project.features && project.features.length > 0 && (
+              <div className="mb-6">
+                <h3 className="mb-2 text-xs font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider">
+                  // Key Features
+                </h3>
+                <ul className="space-y-2 font-sans">
+                  {project.features.map((f, i) => (
+                    <li
+                      key={f.id || i}
+                      className="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300"
+                    >
+                      <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-cyan-500" />
+                      {typeof f === 'object' ? (f.feature || f.title || '') : f}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Technologies */}
+            {(project.technologies || project.tech_stack) && (project.technologies?.length > 0 || project.tech_stack?.length > 0) && (
               <div className="mb-6">
                 <h3 className="mb-2 text-xs font-bold text-violet-600 dark:text-violet-400 uppercase tracking-wider">
                   // Stack Modules
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {project.tech_stack.map((tech) => (
+                  {(project.technologies || project.tech_stack).map((tech, idx) => (
                     <span
-                      key={tech}
+                      key={tech.id || tech.name || tech || idx}
                       className="rounded-lg bg-slate-100 dark:bg-[#151821] px-3 py-1 text-xs font-semibold text-cyan-700 dark:text-cyan-400 border border-slate-200 dark:border-cyan-500/20"
                     >
-                      {tech}
+                      {typeof tech === 'object' ? tech.name : tech}
                     </span>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* Key Challenges */}
+            {project.challenges && (
+              <div className="mb-6">
+                <h3 className="mb-2 text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">
+                  // Key Challenges
+                </h3>
+                <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed font-sans">
+                  {project.challenges}
+                </p>
               </div>
             )}
 
@@ -181,28 +239,33 @@ export default function MonoProjectModal({ project, onClose }) {
 
             {/* Links CTA */}
             <div className="flex flex-wrap gap-3 pt-4 border-t border-slate-200 dark:border-white/10">
-              {project.github_url && (
-                <a
-                  href={project.github_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-xl bg-slate-100 dark:bg-[#151821] px-4 py-2.5 text-xs font-bold text-slate-900 dark:text-white border border-slate-200 dark:border-white/10 hover:border-cyan-500 transition-colors"
-                >
-                  <GithubIcon className="h-4 w-4" />
-                  <span>View Repository</span>
-                </a>
-              )}
-              {project.live_url && (
-                <a
-                  href={project.live_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-400 to-violet-400 px-4 py-2.5 text-xs font-bold text-slate-950 shadow-lg shadow-cyan-500/20 hover:opacity-95 transition-opacity"
-                >
-                  <ExternalLink className="h-4 w-4" />
-                  <span>Live Production Demo</span>
-                </a>
-              )}
+              <a
+                href={project.live_demo_url || project.live_url || '#'}
+                target={project.live_demo_url || project.live_url ? "_blank" : "_self"}
+                rel="noopener noreferrer"
+                className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-all ${
+                  project.live_demo_url || project.live_url
+                    ? 'bg-gradient-to-r from-cyan-500 to-violet-500 text-white shadow-lg shadow-cyan-500/20 hover:opacity-95'
+                    : 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed'
+                }`}
+              >
+                <ExternalLink className="h-4 w-4" />
+                <span>{project.live_demo_url || project.live_url ? 'Live Production Demo' : 'Demo Unavailable'}</span>
+              </a>
+
+              <a
+                href={project.github_url || '#'}
+                target={project.github_url ? "_blank" : "_self"}
+                rel="noopener noreferrer"
+                className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-colors ${
+                  project.github_url
+                    ? 'bg-slate-100 dark:bg-[#151821] text-slate-900 dark:text-white border border-slate-200 dark:border-white/10 hover:border-cyan-500'
+                    : 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed'
+                }`}
+              >
+                <GithubIcon className="h-4 w-4" />
+                <span>{project.github_url ? 'View Repository' : 'GitHub Unavailable'}</span>
+              </a>
             </div>
 
           </motion.div>
