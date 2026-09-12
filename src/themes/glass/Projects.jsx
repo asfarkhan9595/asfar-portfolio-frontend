@@ -119,7 +119,7 @@ export default function Projects({ projects }) {
       : projects.filter((p) => p.category?.name === activeCategory);
 
   return (
-    <section id="projects" className="py-20 sm:py-24 relative">
+    <section id="projects" className="py-20 sm:py-24 relative overflow-hidden">
       <div className="pointer-events-none absolute left-1/3 top-10 -z-10 h-96 w-96 rounded-full bg-blue-500/10 blur-3xl dark:bg-purple-600/10" />
 
       <Container>

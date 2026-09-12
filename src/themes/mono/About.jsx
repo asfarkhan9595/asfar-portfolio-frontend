@@ -34,7 +34,7 @@ export default function About({ profile }) {
   ];
 
   return (
-    <section id="about" className="py-20 relative">
+    <section id="about" className="py-20 relative overflow-hidden font-mono">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
         
         {/* Section Header */}

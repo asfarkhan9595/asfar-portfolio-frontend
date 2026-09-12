@@ -55,7 +55,7 @@ export default function Contact({ profile, socialLinks, contactSettings }) {
   };
 
   return (
-    <section id="contact" className="py-20 relative">
+    <section id="contact" className="py-20 relative overflow-hidden">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
         
         {/* Section Header */}

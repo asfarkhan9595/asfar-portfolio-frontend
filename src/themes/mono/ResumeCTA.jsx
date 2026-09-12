@@ -12,7 +12,7 @@ export default function ResumeCTA({ profile }) {
   };
 
   return (
-    <section id="resume" className="py-16 relative">
+    <section id="resume" className="py-16 relative overflow-hidden">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
         
         <motion.div

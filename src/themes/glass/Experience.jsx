@@ -24,7 +24,7 @@ export default function Experience({ experience }) {
   if (!experience || experience.length === 0) return null;
 
   return (
-    <section id="experience" className="py-20 sm:py-28 relative">
+    <section id="experience" className="py-20 sm:py-28 relative overflow-hidden">
       <div className="pointer-events-none absolute left-10 bottom-10 -z-10 h-80 w-80 rounded-full bg-indigo-500/10 blur-3xl dark:bg-purple-600/10" />
 
       <Container>

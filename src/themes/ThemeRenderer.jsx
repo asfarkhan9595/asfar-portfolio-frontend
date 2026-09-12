@@ -142,7 +142,7 @@ export default function ThemeRenderer({ activeTheme = 'modern', data, onThemeCha
     const slug = path.replace('/blog/', '').trim();
     const DetailComponent = ActiveComponents.BlogPostDetail;
     return (
-      <div className={`theme-${selectedKey} min-h-screen flex flex-col`}>
+      <div className={`theme-${selectedKey} min-h-screen flex flex-col overflow-x-hidden max-w-full`}>
         <DetailComponent
           slug={slug}
           posts={posts}
@@ -160,7 +160,7 @@ export default function ThemeRenderer({ activeTheme = 'modern', data, onThemeCha
   if (path === '/blog') {
     const PageComponent = ActiveComponents.BlogPage;
     return (
-      <div className={`theme-${selectedKey} min-h-screen flex flex-col`}>
+      <div className={`theme-${selectedKey} min-h-screen flex flex-col overflow-x-hidden max-w-full`}>
         <PageComponent
           posts={posts}
           profile={profile}
@@ -178,10 +178,10 @@ export default function ThemeRenderer({ activeTheme = 'modern', data, onThemeCha
     const { Navbar, Hero, About, Experience, Skills, Projects, Blog, ResumeCTA: ActiveResumeCTA, Contact, Footer } = ActiveComponents;
 
     return (
-      <div className={`theme-${selectedKey} min-h-screen flex flex-col`}>
+      <div className={`theme-${selectedKey} min-h-screen flex flex-col overflow-x-hidden max-w-full relative`}>
         <Navbar profile={profile} settings={settings} onNavigate={navigate} currentTheme={selectedKey} onThemeChange={onThemeChange} />
 
-        <main className="flex-1">
+        <main className="flex-1 overflow-x-hidden max-w-full">
           <Hero profile={profile} settings={settings} socialLinks={socialLinks} />
           <About profile={profile} />
           <Skills categories={skills} />

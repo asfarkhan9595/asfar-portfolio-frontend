@@ -85,7 +85,7 @@ export default function Hero({ profile, settings, socialLinks = [] }) {
   };
 
   return (
-    <section id="home" className="relative flex min-h-screen items-center pt-16">
+    <section id="home" className="relative flex min-h-screen items-center pt-16 overflow-hidden">
       <div className="gradient-orb animate-float absolute left-1/4 top-1/4 -z-10 h-64 w-64 bg-emerald-500/10 dark:bg-emerald-500/5" />
       <div className="gradient-orb animate-float-delayed absolute bottom-1/4 right-1/3 -z-10 h-48 w-48 bg-teal-500/8 dark:bg-teal-500/[0.03]" />
 

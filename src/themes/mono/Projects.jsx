@@ -32,7 +32,7 @@ export default function Projects({ projects }) {
   if (!projects || projects.length === 0) return null;
 
   return (
-    <section id="projects" className="py-20 relative">
+    <section id="projects" className="py-20 relative overflow-hidden">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
         
         {/* Section Header */}

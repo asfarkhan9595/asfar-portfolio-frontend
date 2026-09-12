@@ -5,7 +5,7 @@ export default function Experience({ experience }) {
   if (!experience || experience.length === 0) return null;
 
   return (
-    <section id="experience" className="py-20 relative">
+    <section id="experience" className="py-20 relative overflow-hidden">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
         
         {/* Section Header */}

@@ -8,7 +8,7 @@ export default function About({ profile }) {
   const paragraphs = profile?.about ? profile.about.split('\n\n') : [];
 
   return (
-    <section id="about" className="py-20 sm:py-24 relative">
+    <section id="about" className="py-20 sm:py-24 relative overflow-hidden">
       <div className="pointer-events-none absolute right-1/4 top-1/2 -z-10 h-72 w-72 rounded-full bg-blue-500/10 blur-3xl dark:bg-cyan-500/10" />
 
       <Container>

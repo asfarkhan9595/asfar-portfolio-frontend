@@ -7,7 +7,7 @@ export default function Skills({ categories }) {
   const prefersReducedMotion = useReducedMotion();
 
   return (
-    <section id="skills" className="py-20 sm:py-24 relative">
+    <section id="skills" className="py-20 sm:py-24 relative overflow-hidden">
       <div className="pointer-events-none absolute right-10 top-1/4 -z-10 h-80 w-80 rounded-full bg-cyan-500/10 blur-3xl dark:bg-blue-600/10" />
 
       <Container>

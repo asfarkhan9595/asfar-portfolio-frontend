@@ -61,7 +61,7 @@ export default function Contact({ profile, socialLinks = [], contactSettings = n
   };
 
   return (
-    <section id="contact" className="py-20 sm:py-24 relative">
+    <section id="contact" className="py-20 sm:py-24 relative overflow-hidden">
       <div className="pointer-events-none absolute left-10 bottom-10 -z-10 h-80 w-80 rounded-full bg-cyan-500/10 blur-3xl dark:bg-purple-600/10" />
 
       <Container>

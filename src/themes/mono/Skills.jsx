@@ -12,7 +12,7 @@ export default function Skills({ categories }) {
     : [{ name: 'Full-Stack Technical Stack', skills: categories }];
 
   return (
-    <section id="skills" className="py-20 relative">
+    <section id="skills" className="py-20 relative overflow-hidden">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
         
         {/* Section Header */}

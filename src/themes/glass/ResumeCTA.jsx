@@ -7,7 +7,7 @@ export default function ResumeCTA({ profile }) {
   const resumeHref = profile?.resume_url || '#';
 
   return (
-    <section id="resume" className="py-20 sm:py-24 relative">
+    <section id="resume" className="py-20 sm:py-24 relative overflow-hidden">
       <div className="pointer-events-none absolute right-1/3 top-10 -z-10 h-72 w-72 rounded-full bg-cyan-500/10 blur-3xl dark:bg-purple-600/10" />
 
       <Container>
