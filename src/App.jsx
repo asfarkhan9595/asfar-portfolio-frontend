@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import ThemeRenderer from './themes/ThemeRenderer';
 import MaintenanceMode from './components/MaintenanceMode';
-import { API_BASE_URL } from './config/api';
+import { API_BASE_URL, fetchAPI } from './config/api';
 
 export default function App() {
   const [data, setData] = useState({ profile: null, skills: null, projects: null, experience: null, socialLinks: [], contactSettings: null, settings: null, posts: [] });
@@ -9,14 +9,14 @@ export default function App() {
 
   useEffect(() => {
     Promise.all([
-      fetch(`${API_BASE_URL}/profile`).then(res => res.json()),
-      fetch(`${API_BASE_URL}/skills`).then(res => res.json()),
-      fetch(`${API_BASE_URL}/projects`).then(res => res.json()),
-      fetch(`${API_BASE_URL}/experience`).then(res => res.json()),
-      fetch(`${API_BASE_URL}/social-links`).then(res => res.json()),
-      fetch(`${API_BASE_URL}/contact-settings`).then(res => res.json()),
-      fetch(`${API_BASE_URL}/posts`).then(res => res.json()).catch(() => ({ data: [] })),
-      fetch(`${API_BASE_URL}/settings`).then(res => res.json()).catch(() => ({ data: null }))
+      fetchAPI('/profile').then(res => res.json()),
+      fetchAPI('/skills').then(res => res.json()),
+      fetchAPI('/projects').then(res => res.json()),
+      fetchAPI('/experience').then(res => res.json()),
+      fetchAPI('/social-links').then(res => res.json()),
+      fetchAPI('/contact-settings').then(res => res.json()),
+      fetchAPI('/posts').then(res => res.json()).catch(() => ({ data: [] })),
+      fetchAPI('/settings').then(res => res.json()).catch(() => ({ data: null }))
     ]).then(([profileRes, skillsRes, projectsRes, expRes, socialRes, contactSettingsRes, postsRes, settingsRes]) => {
       const siteSettings = settingsRes?.data || null;
 
