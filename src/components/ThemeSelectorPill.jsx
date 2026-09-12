@@ -41,7 +41,7 @@ export default function ThemeSelectorPill({ currentTheme = 'modern', onThemeChan
       </button>
 
       {open && (
-        <div className="absolute left-0 mt-2 w-36 rounded-xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200 dark:border-slate-800 shadow-xl py-1.5 z-50 text-xs font-semibold">
+        <div className="absolute right-0 sm:left-0 mt-2 w-36 rounded-xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200 dark:border-slate-800 shadow-xl py-1.5 z-50 text-xs font-semibold">
           <div className="px-3 py-1 text-[9px] font-bold uppercase text-slate-400 dark:text-slate-500 border-b border-slate-100 dark:border-slate-800 mb-1">
             Switch Theme
           </div>

@@ -95,7 +95,7 @@ export default function Navbar({ profile, settings, onNavigate, currentTheme, on
         <a
           href="#home"
           onClick={(e) => handleClick(e, '#home')}
-          className="flex items-center gap-1.5 sm:gap-2.5 group text-slate-900 dark:text-white shrink min-w-0 max-w-[70%] sm:max-w-none"
+          className="flex items-center gap-1.5 sm:gap-2.5 group text-slate-900 dark:text-white shrink min-w-0"
         >
           {settings?.site_logo && !logoError ? (
             <img 
@@ -109,11 +109,8 @@ export default function Navbar({ profile, settings, onNavigate, currentTheme, on
               {initialLetter}
             </span>
           )}
-          <span className="font-mono text-xs sm:text-sm font-bold tracking-wide text-slate-900 dark:text-white flex items-center gap-1.5 min-w-0 overflow-hidden">
-            <span className="truncate max-w-[80px] xs:max-w-[120px] sm:max-w-none">
-              {profile?.name || settings?.site_name || 'Asfar Khan'}
-            </span>
-            <ThemeSelectorPill currentTheme={currentTheme} onThemeChange={onThemeChange} />
+          <span className="font-mono text-xs sm:text-sm font-bold tracking-wide text-slate-900 dark:text-white truncate max-w-[90px] xs:max-w-[140px] sm:max-w-none">
+            {profile?.name || settings?.site_name || 'Asfar Khan'}
           </span>
         </a>
 
@@ -139,7 +136,8 @@ export default function Navbar({ profile, settings, onNavigate, currentTheme, on
         </div>
 
         {/* Right Action & Theme Toggle */}
-        <div className="flex items-center gap-2.5 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+          <ThemeSelectorPill currentTheme={currentTheme} onThemeChange={onThemeChange} />
           {showThemeToggle && <ThemeToggle />}
           
           <a

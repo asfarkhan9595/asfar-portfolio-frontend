@@ -93,7 +93,7 @@ export default function Navbar({ profile, settings, onNavigate, currentTheme, on
         <a
           href="#home"
           onClick={(e) => handleClick(e, '#home')}
-          className="flex items-center gap-1.5 sm:gap-2.5 px-2 sm:px-2.5 py-1 rounded-xl bg-white/40 dark:bg-white/5 border border-white/60 dark:border-white/10 shadow-sm backdrop-blur-md hover:border-cyan-500/30 transition-all group shrink min-w-0 max-w-[70%] sm:max-w-none"
+          className="flex items-center gap-1.5 sm:gap-2.5 px-2 sm:px-2.5 py-1 rounded-xl bg-white/40 dark:bg-white/5 border border-white/60 dark:border-white/10 shadow-sm backdrop-blur-md hover:border-cyan-500/30 transition-all group shrink min-w-0"
         >
           {settings?.site_logo && !logoError ? (
             <img 
@@ -107,11 +107,8 @@ export default function Navbar({ profile, settings, onNavigate, currentTheme, on
               {(profile?.name || settings?.site_name || 'AK').charAt(0).toUpperCase()}
             </span>
           )}
-          <span className="flex items-center gap-1.5 min-w-0 overflow-hidden">
-            <span className="font-extrabold text-xs sm:text-sm tracking-tight bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 dark:from-white dark:via-cyan-200 dark:to-blue-300 bg-clip-text text-transparent drop-shadow-sm truncate max-w-[80px] xs:max-w-[120px] sm:max-w-none">
-              {profile?.name || settings?.site_name || 'Asfar Khan'}
-            </span>
-            <ThemeSelectorPill currentTheme={currentTheme} onThemeChange={onThemeChange} />
+          <span className="font-extrabold text-xs sm:text-sm tracking-tight bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 dark:from-white dark:via-cyan-200 dark:to-blue-300 bg-clip-text text-transparent drop-shadow-sm truncate max-w-[90px] xs:max-w-[140px] sm:max-w-none">
+            {profile?.name || settings?.site_name || 'Asfar Khan'}
           </span>
         </a>
 
@@ -144,7 +141,8 @@ export default function Navbar({ profile, settings, onNavigate, currentTheme, on
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+          <ThemeSelectorPill currentTheme={currentTheme} onThemeChange={onThemeChange} />
           <ThemeToggle showToggle={showThemeToggle} />
           <button
             onClick={() => setIsOpen(!isOpen)}
