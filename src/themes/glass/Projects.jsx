@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { ArrowRight, ExternalLink, Image as ImageIcon } from 'lucide-react';
+import { ArrowRight, ExternalLink, Image as ImageIcon, ChevronLeft, ChevronRight } from 'lucide-react';
 import Container from '../../components/Container';
 import SectionHeading from '../../components/SectionHeading';
 import ProjectFilters from '../../components/ProjectFilters';
 import GlassProjectModal from './ProjectModal';
+
+const ITEMS_PER_PAGE = 4;
 
 function GlassProjectCard({ project, onViewDetails, index = 0 }) {
   const [imgError, setImgError] = useState(false);
@@ -109,6 +111,7 @@ function GlassProjectCard({ project, onViewDetails, index = 0 }) {
 export default function Projects({ projects }) {
   const [activeCategory, setActiveCategory] = useState('All');
   const [selectedProject, setSelectedProject] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const uniqueCats = projects ? Array.from(new Set(projects.map(p => p.category?.name).filter(Boolean))) : [];
   const projectCategories = ['All', ...uniqueCats];
@@ -117,6 +120,22 @@ export default function Projects({ projects }) {
     activeCategory === 'All'
       ? projects
       : projects.filter((p) => p.category?.name === activeCategory);
+
+  const handleCategoryChange = (cat) => {
+    setActiveCategory(cat);
+    setCurrentPage(1);
+  };
+
+  const totalPages = Math.ceil((filtered?.length || 0) / ITEMS_PER_PAGE);
+  const paginatedProjects = filtered ? filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE) : [];
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    const element = document.getElementById('projects');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <section id="projects" className="py-20 sm:py-24 relative overflow-hidden">
@@ -131,21 +150,61 @@ export default function Projects({ projects }) {
         <ProjectFilters
           categories={projectCategories}
           activeCategory={activeCategory}
-          onCategoryChange={setActiveCategory}
+          onCategoryChange={handleCategoryChange}
           activeClass="bg-gradient-to-r from-blue-600 to-cyan-500 shadow-md shadow-cyan-500/20 border border-white/20"
         />
 
-        {filtered && filtered.length > 0 ? (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            {filtered.map((project, index) => (
-              <GlassProjectCard
-                key={project.id}
-                project={project}
-                index={index}
-                onViewDetails={setSelectedProject}
-              />
-            ))}
-          </div>
+        {paginatedProjects && paginatedProjects.length > 0 ? (
+          <>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              {paginatedProjects.map((project, index) => (
+                <GlassProjectCard
+                  key={project.id}
+                  project={project}
+                  index={index}
+                  onViewDetails={setSelectedProject}
+                />
+              ))}
+            </div>
+
+            {totalPages > 1 && (
+              <div className="mt-12 flex items-center justify-center gap-2">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="inline-flex items-center justify-center rounded-2xl p-2.5 text-sm font-medium text-slate-600 hover:bg-white/60 dark:text-slate-400 dark:hover:bg-slate-800/60 border border-white/60 dark:border-white/10 backdrop-blur-xl disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                  aria-label="Previous Page"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+
+                <div className="flex items-center gap-1.5">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`h-10 min-w-[40px] px-3.5 rounded-2xl text-sm font-semibold backdrop-blur-xl transition-all ${
+                        currentPage === page
+                          ? 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-lg shadow-cyan-500/25 border border-white/30'
+                          : 'bg-white/40 dark:bg-slate-900/40 text-slate-700 dark:text-slate-300 border border-white/60 dark:border-white/10 hover:bg-white/80 dark:hover:bg-slate-800/80'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="inline-flex items-center justify-center rounded-2xl p-2.5 text-sm font-medium text-slate-600 hover:bg-white/60 dark:text-slate-400 dark:hover:bg-slate-800/60 border border-white/60 dark:border-white/10 backdrop-blur-xl disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                  aria-label="Next Page"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+              </div>
+            )}
+          </>
         ) : (
           <div className="py-12 text-center text-slate-500 dark:text-slate-400 font-medium">
             No projects found in this category.

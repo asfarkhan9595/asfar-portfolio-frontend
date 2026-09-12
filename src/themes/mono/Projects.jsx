@@ -1,12 +1,15 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { ExternalLink, Terminal, Layers, Eye } from 'lucide-react';
+import { ExternalLink, Terminal, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
 import { GithubIcon } from '../../components/Icons';
 import MonoProjectModal from './ProjectModal';
+
+const ITEMS_PER_PAGE = 4;
 
 export default function Projects({ projects }) {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [activeModalProject, setActiveModalProject] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const categories = useMemo(() => {
     if (!projects || projects.length === 0) return ['All'];
@@ -28,6 +31,26 @@ export default function Projects({ projects }) {
       return catName === selectedCategory;
     });
   }, [projects, selectedCategory]);
+
+  const handleCategoryChange = (cat) => {
+    setSelectedCategory(cat);
+    setCurrentPage(1);
+  };
+
+  const totalPages = Math.ceil((filteredProjects?.length || 0) / ITEMS_PER_PAGE);
+
+  const paginatedProjects = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredProjects.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredProjects, currentPage]);
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    const element = document.getElementById('projects');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   if (!projects || projects.length === 0) return null;
 
@@ -53,7 +76,7 @@ export default function Projects({ projects }) {
             return (
               <button
                 key={cat}
-                onClick={() => setSelectedCategory(cat)}
+                onClick={() => handleCategoryChange(cat)}
                 className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
                   isActive
                     ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 shadow-sm'
@@ -68,7 +91,7 @@ export default function Projects({ projects }) {
 
         {/* Projects Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {filteredProjects.map((project, idx) => (
+          {paginatedProjects.map((project, idx) => (
             <motion.div
               key={project.id || project.title || idx}
               initial={{ opacity: 0, y: 20 }}
@@ -105,7 +128,7 @@ export default function Projects({ projects }) {
                 {/* Card Content */}
                 <div className="p-6 font-mono">
                   <div className="flex items-center justify-between text-[10px] text-cyan-400 mb-2">
-                    <span>BUILD // 0{idx + 1}</span>
+                    <span>BUILD // 0{(currentPage - 1) * ITEMS_PER_PAGE + idx + 1}</span>
                     {project.category && (
                       <span className="text-slate-500 dark:text-slate-400 uppercase">
                         {typeof project.category === 'object' ? project.category.name : project.category}
@@ -176,6 +199,45 @@ export default function Projects({ projects }) {
           ))}
         </div>
 
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="mt-12 flex items-center justify-center gap-2 font-mono">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="inline-flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-bold bg-[#0F1117] text-slate-400 border border-white/10 hover:text-cyan-400 hover:border-cyan-500/30 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              <span>PREV</span>
+            </button>
+
+            <div className="flex items-center gap-1">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  className={`h-8 w-8 rounded-lg text-xs font-bold transition-all ${
+                    currentPage === page
+                      ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/50 shadow-sm shadow-cyan-500/10'
+                      : 'bg-[#0F1117] text-slate-400 border border-white/10 hover:text-white hover:border-white/20'
+                  }`}
+                >
+                  {page < 10 ? `0${page}` : page}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="inline-flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-bold bg-[#0F1117] text-slate-400 border border-white/10 hover:text-cyan-400 hover:border-cyan-500/30 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+            >
+              <span>NEXT</span>
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
         {/* Modal */}
         <MonoProjectModal
           project={activeModalProject}
@@ -186,4 +248,3 @@ export default function Projects({ projects }) {
     </section>
   );
 }
-
