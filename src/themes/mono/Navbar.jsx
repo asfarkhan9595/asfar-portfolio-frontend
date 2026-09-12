@@ -95,7 +95,7 @@ export default function Navbar({ profile, settings, onNavigate, currentTheme, on
         <a
           href="#home"
           onClick={(e) => handleClick(e, '#home')}
-          className="flex items-center gap-2.5 group text-slate-900 dark:text-white shrink-0 whitespace-nowrap"
+          className="flex items-center gap-1.5 sm:gap-2.5 group text-slate-900 dark:text-white shrink min-w-0 max-w-[70%] sm:max-w-none"
         >
           {settings?.site_logo && !logoError ? (
             <img 
@@ -109,8 +109,10 @@ export default function Navbar({ profile, settings, onNavigate, currentTheme, on
               {initialLetter}
             </span>
           )}
-          <span className="font-mono text-sm font-bold tracking-wide text-slate-900 dark:text-white flex items-center gap-1.5 whitespace-nowrap">
-            {profile?.name || settings?.site_name || 'Asfar Khan'}
+          <span className="font-mono text-xs sm:text-sm font-bold tracking-wide text-slate-900 dark:text-white flex items-center gap-1.5 min-w-0 overflow-hidden">
+            <span className="truncate max-w-[80px] xs:max-w-[120px] sm:max-w-none">
+              {profile?.name || settings?.site_name || 'Asfar Khan'}
+            </span>
             <ThemeSelectorPill currentTheme={currentTheme} onThemeChange={onThemeChange} />
           </span>
         </a>

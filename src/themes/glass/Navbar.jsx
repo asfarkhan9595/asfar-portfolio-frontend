@@ -83,8 +83,8 @@ export default function Navbar({ profile, settings, onNavigate, currentTheme, on
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 px-3 py-3 transition-all duration-300">
-      <div className={`mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6 rounded-2xl transition-all duration-300 ${
+    <nav className="fixed top-0 left-0 right-0 z-50 px-2 sm:px-3 py-2 sm:py-3 transition-all duration-300">
+      <div className={`mx-auto flex h-14 max-w-6xl items-center justify-between px-3 sm:px-6 rounded-2xl transition-all duration-300 ${
         scrolled
           ? 'bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border border-white/60 dark:border-white/10 shadow-lg shadow-blue-500/5 dark:shadow-cyan-500/10'
           : 'bg-white/40 dark:bg-slate-900/40 backdrop-blur-md border border-white/40 dark:border-white/5'
@@ -93,22 +93,22 @@ export default function Navbar({ profile, settings, onNavigate, currentTheme, on
         <a
           href="#home"
           onClick={(e) => handleClick(e, '#home')}
-          className="flex items-center gap-2.5 px-2.5 py-1 rounded-xl bg-white/40 dark:bg-white/5 border border-white/60 dark:border-white/10 shadow-sm backdrop-blur-md hover:border-cyan-500/30 transition-all group"
+          className="flex items-center gap-1.5 sm:gap-2.5 px-2 sm:px-2.5 py-1 rounded-xl bg-white/40 dark:bg-white/5 border border-white/60 dark:border-white/10 shadow-sm backdrop-blur-md hover:border-cyan-500/30 transition-all group shrink min-w-0 max-w-[70%] sm:max-w-none"
         >
           {settings?.site_logo && !logoError ? (
             <img 
               src={settings.site_logo} 
               alt={settings?.site_name || 'Logo'} 
               onError={() => setLogoError(true)}
-              className="h-7 w-7 object-cover rounded-lg border border-white/60 dark:border-white/20 shadow-sm group-hover:scale-105 transition-transform" 
+              className="h-7 w-7 object-cover rounded-lg border border-white/60 dark:border-white/20 shadow-sm group-hover:scale-105 transition-transform shrink-0" 
             />
           ) : (
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 text-xs font-extrabold text-white shadow-md shadow-blue-500/20">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 text-xs font-extrabold text-white shadow-md shadow-blue-500/20 shrink-0">
               {(profile?.name || settings?.site_name || 'AK').charAt(0).toUpperCase()}
             </span>
           )}
-          <span className="flex items-center gap-2">
-            <span className="font-extrabold text-sm tracking-tight bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 dark:from-white dark:via-cyan-200 dark:to-blue-300 bg-clip-text text-transparent drop-shadow-sm">
+          <span className="flex items-center gap-1.5 min-w-0 overflow-hidden">
+            <span className="font-extrabold text-xs sm:text-sm tracking-tight bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 dark:from-white dark:via-cyan-200 dark:to-blue-300 bg-clip-text text-transparent drop-shadow-sm truncate max-w-[80px] xs:max-w-[120px] sm:max-w-none">
               {profile?.name || settings?.site_name || 'Asfar Khan'}
             </span>
             <ThemeSelectorPill currentTheme={currentTheme} onThemeChange={onThemeChange} />
@@ -144,11 +144,11 @@ export default function Navbar({ profile, settings, onNavigate, currentTheme, on
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <ThemeToggle showToggle={showThemeToggle} />
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/60 dark:border-white/10 bg-white/50 dark:bg-slate-800/50 text-slate-700 md:hidden dark:text-slate-300 backdrop-blur-md"
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/60 dark:border-white/10 bg-white/50 dark:bg-slate-800/50 text-slate-700 md:hidden dark:text-slate-300 backdrop-blur-md shrink-0"
             aria-label="Toggle menu"
           >
             {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}

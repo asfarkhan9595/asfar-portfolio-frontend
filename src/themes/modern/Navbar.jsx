@@ -98,22 +98,22 @@ export default function Navbar({ profile, settings, onNavigate, currentTheme, on
         <a
           href="#home"
           onClick={(e) => handleClick(e, '#home')}
-          className="flex items-center gap-2.5 text-base font-bold text-slate-900 dark:text-white group"
+          className="flex items-center gap-1.5 sm:gap-2.5 text-base font-bold text-slate-900 dark:text-white group shrink min-w-0 max-w-[70%] sm:max-w-none"
         >
           {settings?.site_logo && !logoError ? (
             <img 
               src={settings.site_logo} 
               alt={settings?.site_name || 'Logo'} 
               onError={() => setLogoError(true)}
-              className="h-8 w-8 object-cover rounded-lg border border-slate-300 dark:border-slate-700 shadow-sm" 
+              className="h-8 w-8 object-cover rounded-lg border border-slate-300 dark:border-slate-700 shadow-sm shrink-0" 
             />
           ) : (
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-600 text-sm font-bold text-white shadow-sm">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-600 text-sm font-bold text-white shadow-sm shrink-0">
               {(profile?.name || settings?.site_name || 'AK').charAt(0).toUpperCase()}
             </span>
           )}
-          <span className="flex items-center gap-2">
-            <span className="font-bold text-sm sm:text-base text-slate-900 dark:text-white tracking-tight">
+          <span className="flex items-center gap-1.5 min-w-0 overflow-hidden">
+            <span className="font-bold text-xs sm:text-base text-slate-900 dark:text-white tracking-tight truncate max-w-[80px] xs:max-w-[120px] sm:max-w-none">
               {profile?.name || settings?.site_name || 'Asfar Khan'}
             </span>
             <ThemeSelectorPill currentTheme={currentTheme} onThemeChange={onThemeChange} />
