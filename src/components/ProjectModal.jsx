@@ -9,6 +9,7 @@ export default function ProjectModal({ project, onClose }) {
   const [selectedImg, setSelectedImg] = useState(null);
   const [failedImages, setFailedImages] = useState({});
 
+  // Hook 1: Lock body scroll
   useEffect(() => {
     if (project) {
       document.body.style.overflow = 'hidden';
@@ -22,29 +23,16 @@ export default function ProjectModal({ project, onClose }) {
     };
   }, [project]);
 
-  if (!project) return null;
-
-  const handleImageError = (imgKey) => {
-    setFailedImages((prev) => ({ ...prev, [imgKey]: true }));
-  };
-
-  let archLayers = [];
-  if (typeof project.architecture === 'string' && project.architecture.trim().length > 0) {
-    archLayers = project.architecture.split('->').map((step) => ({ label: step.trim() }));
-  } else if (Array.isArray(project.architecture)) {
-    archLayers = project.architecture;
-  }
-
-  const whatILearned = project.what_i_learned || project.whatILearned;
-  const projectImages = project.images || [];
+  // Compute images unconditionally before any return
+  const projectImages = project?.images || [];
   const rawAllImages = [];
 
-  if (project.cover_image) {
+  if (project?.cover_image) {
     rawAllImages.push({ id: 'cover', image_path: project.cover_image });
   }
   if (projectImages.length > 0) {
     projectImages.forEach((img, idx) => {
-      if (img.image_path !== project.cover_image) {
+      if (img.image_path !== project?.cover_image) {
         rawAllImages.push({ id: img.id || `gallery-${idx}`, image_path: img.image_path });
       }
     });
@@ -53,24 +41,11 @@ export default function ProjectModal({ project, onClose }) {
   const validImages = rawAllImages.filter((img) => !failedImages[img.image_path]);
   const rawActiveImg = selectedImg || (validImages.length > 0 ? validImages[0].image_path : null);
   const activeMainImg = rawActiveImg && !failedImages[rawActiveImg] ? rawActiveImg : (validImages[0]?.image_path || null);
-
   const currentImgIndex = validImages.findIndex((img) => img.image_path === activeMainImg);
 
-  const handlePrevImage = (e) => {
-    if (e) e.stopPropagation();
-    if (validImages.length <= 1) return;
-    const prevIdx = (currentImgIndex - 1 + validImages.length) % validImages.length;
-    setSelectedImg(validImages[prevIdx].image_path);
-  };
-
-  const handleNextImage = (e) => {
-    if (e) e.stopPropagation();
-    if (validImages.length <= 1) return;
-    const nextIdx = (currentImgIndex + 1) % validImages.length;
-    setSelectedImg(validImages[nextIdx].image_path);
-  };
-
+  // Hook 2: Keyboard navigation listener (unconditional)
   useEffect(() => {
+    if (!project) return;
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') onClose();
       if (e.key === 'ArrowLeft' && validImages.length > 1) {
@@ -86,7 +61,39 @@ export default function ProjectModal({ project, onClose }) {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onClose, validImages, currentImgIndex]);
+  }, [project, onClose, validImages.length, currentImgIndex]);
+
+  // Early return after all hooks have been declared
+  if (!project) return null;
+
+  const handleImageError = (imgKey) => {
+    setFailedImages((prev) => ({ ...prev, [imgKey]: true }));
+  };
+
+  let archLayers = [];
+  if (typeof project.architecture === 'string' && project.architecture.trim().length > 0) {
+    archLayers = project.architecture.split('->').map((step) => ({ label: step.trim() }));
+  } else if (Array.isArray(project.architecture)) {
+    archLayers = project.architecture;
+  }
+
+  const whatILearned = project.what_i_learned || project.whatILearned;
+
+  const handlePrevImage = (e) => {
+    if (e) e.stopPropagation();
+    if (validImages.length <= 1) return;
+    const idx = currentImgIndex < 0 ? 0 : currentImgIndex;
+    const prevIdx = (idx - 1 + validImages.length) % validImages.length;
+    setSelectedImg(validImages[prevIdx].image_path);
+  };
+
+  const handleNextImage = (e) => {
+    if (e) e.stopPropagation();
+    if (validImages.length <= 1) return;
+    const idx = currentImgIndex < 0 ? 0 : currentImgIndex;
+    const nextIdx = (idx + 1) % validImages.length;
+    setSelectedImg(validImages[nextIdx].image_path);
+  };
 
   return (
     <AnimatePresence>
