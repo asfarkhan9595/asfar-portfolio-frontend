@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ExternalLink, Image as ImageIcon } from 'lucide-react';
+import { X, ExternalLink, Image as ImageIcon, ChevronLeft, ChevronRight } from 'lucide-react';
 import { GithubIcon } from './Icons';
 import ArchitectureDiagram from './ArchitectureDiagram';
 import Button from './Button';
@@ -21,14 +21,6 @@ export default function ProjectModal({ project, onClose }) {
       document.body.style.overflow = '';
     };
   }, [project]);
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onClose]);
 
   if (!project) return null;
 
@@ -61,6 +53,40 @@ export default function ProjectModal({ project, onClose }) {
   const validImages = rawAllImages.filter((img) => !failedImages[img.image_path]);
   const rawActiveImg = selectedImg || (validImages.length > 0 ? validImages[0].image_path : null);
   const activeMainImg = rawActiveImg && !failedImages[rawActiveImg] ? rawActiveImg : (validImages[0]?.image_path || null);
+
+  const currentImgIndex = validImages.findIndex((img) => img.image_path === activeMainImg);
+
+  const handlePrevImage = (e) => {
+    if (e) e.stopPropagation();
+    if (validImages.length <= 1) return;
+    const prevIdx = (currentImgIndex - 1 + validImages.length) % validImages.length;
+    setSelectedImg(validImages[prevIdx].image_path);
+  };
+
+  const handleNextImage = (e) => {
+    if (e) e.stopPropagation();
+    if (validImages.length <= 1) return;
+    const nextIdx = (currentImgIndex + 1) % validImages.length;
+    setSelectedImg(validImages[nextIdx].image_path);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowLeft' && validImages.length > 1) {
+        const idx = currentImgIndex < 0 ? 0 : currentImgIndex;
+        const prevIdx = (idx - 1 + validImages.length) % validImages.length;
+        setSelectedImg(validImages[prevIdx].image_path);
+      }
+      if (e.key === 'ArrowRight' && validImages.length > 1) {
+        const idx = currentImgIndex < 0 ? 0 : currentImgIndex;
+        const nextIdx = (idx + 1) % validImages.length;
+        setSelectedImg(validImages[nextIdx].image_path);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose, validImages, currentImgIndex]);
 
   return (
     <AnimatePresence>
@@ -116,16 +142,39 @@ export default function ProjectModal({ project, onClose }) {
               </div>
 
               {/* Screenshots gallery */}
-              <div className="mb-8 overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800/50">
+              <div className="mb-8 overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800/50 relative">
                 {activeMainImg ? (
                   <div className="space-y-3 p-3">
-                    <div className="flex aspect-video w-full items-center justify-center overflow-hidden rounded-lg bg-slate-900 border border-slate-200 dark:border-slate-800">
+                    <div className="relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-lg bg-slate-900 border border-slate-200 dark:border-slate-800 group">
                       <img
                         src={activeMainImg}
                         alt={project.title}
                         onError={() => handleImageError(activeMainImg)}
                         className="h-full w-full object-contain"
                       />
+
+                      {/* Left & Right Slide Buttons */}
+                      {validImages.length > 1 && (
+                        <>
+                          <button
+                            type="button"
+                            onClick={handlePrevImage}
+                            className="absolute left-3 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-slate-950/70 text-white backdrop-blur-md border border-white/20 hover:bg-emerald-600 transition-all shadow-lg"
+                            aria-label="Previous image"
+                          >
+                            <ChevronLeft className="h-6 w-6" />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={handleNextImage}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-slate-950/70 text-white backdrop-blur-md border border-white/20 hover:bg-emerald-600 transition-all shadow-lg"
+                            aria-label="Next image"
+                          >
+                            <ChevronRight className="h-6 w-6" />
+                          </button>
+                        </>
+                      )}
                     </div>
                     {validImages.length > 1 && (
                       <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">

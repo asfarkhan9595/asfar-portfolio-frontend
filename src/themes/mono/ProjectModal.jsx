@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ExternalLink, Image as ImageIcon, Terminal } from 'lucide-react';
+import { X, ExternalLink, Image as ImageIcon, Terminal, ChevronLeft, ChevronRight } from 'lucide-react';
 import { GithubIcon } from '../../components/Icons';
 import ArchitectureDiagram from '../../components/ArchitectureDiagram';
 
@@ -20,14 +20,6 @@ export default function MonoProjectModal({ project, onClose }) {
       document.body.style.overflow = '';
     };
   }, [project]);
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onClose]);
 
   if (!project) return null;
 
@@ -60,6 +52,40 @@ export default function MonoProjectModal({ project, onClose }) {
   const validImages = rawAllImages.filter((img) => !failedImages[img.image_path]);
   const rawActiveImg = selectedImg || (validImages.length > 0 ? validImages[0].image_path : null);
   const activeMainImg = rawActiveImg && !failedImages[rawActiveImg] ? rawActiveImg : (validImages[0]?.image_path || null);
+
+  const currentImgIndex = validImages.findIndex((img) => img.image_path === activeMainImg);
+
+  const handlePrevImage = (e) => {
+    if (e) e.stopPropagation();
+    if (validImages.length <= 1) return;
+    const prevIdx = (currentImgIndex - 1 + validImages.length) % validImages.length;
+    setSelectedImg(validImages[prevIdx].image_path);
+  };
+
+  const handleNextImage = (e) => {
+    if (e) e.stopPropagation();
+    if (validImages.length <= 1) return;
+    const nextIdx = (currentImgIndex + 1) % validImages.length;
+    setSelectedImg(validImages[nextIdx].image_path);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowLeft' && validImages.length > 1) {
+        const idx = currentImgIndex < 0 ? 0 : currentImgIndex;
+        const prevIdx = (idx - 1 + validImages.length) % validImages.length;
+        setSelectedImg(validImages[prevIdx].image_path);
+      }
+      if (e.key === 'ArrowRight' && validImages.length > 1) {
+        const idx = currentImgIndex < 0 ? 0 : currentImgIndex;
+        const nextIdx = (idx + 1) % validImages.length;
+        setSelectedImg(validImages[nextIdx].image_path);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose, validImages, currentImgIndex]);
 
   return (
     <AnimatePresence>
@@ -111,16 +137,39 @@ export default function MonoProjectModal({ project, onClose }) {
               </h2>
             </div>
 
-            {/* Main Screenshot */}
+            {/* Main Screenshot with Navigation Controls */}
             <div className="mb-6 overflow-hidden rounded-2xl border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-[#151821]">
               {activeMainImg ? (
-                <div className="relative aspect-video w-full overflow-hidden bg-slate-900">
+                <div className="relative aspect-video w-full overflow-hidden bg-slate-900 group">
                   <img
                     src={activeMainImg}
                     alt={project.title}
                     onError={() => handleImageError(activeMainImg)}
                     className="h-full w-full object-cover"
                   />
+
+                  {/* Left & Right Slide Buttons */}
+                  {validImages.length > 1 && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={handlePrevImage}
+                        className="absolute left-3 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-[#0F1117]/80 text-cyan-400 backdrop-blur-md border border-cyan-500/30 hover:bg-cyan-500 hover:text-slate-950 transition-all shadow-lg"
+                        aria-label="Previous image"
+                      >
+                        <ChevronLeft className="h-6 w-6" />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={handleNextImage}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-[#0F1117]/80 text-cyan-400 backdrop-blur-md border border-cyan-500/30 hover:bg-cyan-500 hover:text-slate-950 transition-all shadow-lg"
+                        aria-label="Next image"
+                      >
+                        <ChevronRight className="h-6 w-6" />
+                      </button>
+                    </>
+                  )}
                 </div>
               ) : (
                 <div className="flex aspect-video w-full flex-col items-center justify-center bg-slate-100 dark:bg-[#151821] text-slate-500 py-12">

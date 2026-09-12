@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ExternalLink, Image as ImageIcon } from 'lucide-react';
+import { X, ExternalLink, Image as ImageIcon, ChevronLeft, ChevronRight } from 'lucide-react';
 import { GithubIcon } from '../../components/Icons';
 import ArchitectureDiagram from '../../components/ArchitectureDiagram';
 
@@ -20,14 +20,6 @@ export default function GlassProjectModal({ project, onClose }) {
       document.body.style.overflow = '';
     };
   }, [project]);
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onClose]);
 
   if (!project) return null;
 
@@ -62,6 +54,40 @@ export default function GlassProjectModal({ project, onClose }) {
 
   const rawActiveImg = selectedImg || (validImages.length > 0 ? validImages[0].image_path : null);
   const activeMainImg = rawActiveImg && !failedImages[rawActiveImg] ? rawActiveImg : (validImages[0]?.image_path || null);
+
+  const currentImgIndex = validImages.findIndex((img) => img.image_path === activeMainImg);
+
+  const handlePrevImage = (e) => {
+    if (e) e.stopPropagation();
+    if (validImages.length <= 1) return;
+    const prevIdx = (currentImgIndex - 1 + validImages.length) % validImages.length;
+    setSelectedImg(validImages[prevIdx].image_path);
+  };
+
+  const handleNextImage = (e) => {
+    if (e) e.stopPropagation();
+    if (validImages.length <= 1) return;
+    const nextIdx = (currentImgIndex + 1) % validImages.length;
+    setSelectedImg(validImages[nextIdx].image_path);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowLeft' && validImages.length > 1) {
+        const idx = currentImgIndex < 0 ? 0 : currentImgIndex;
+        const prevIdx = (idx - 1 + validImages.length) % validImages.length;
+        setSelectedImg(validImages[prevIdx].image_path);
+      }
+      if (e.key === 'ArrowRight' && validImages.length > 1) {
+        const idx = currentImgIndex < 0 ? 0 : currentImgIndex;
+        const nextIdx = (idx + 1) % validImages.length;
+        setSelectedImg(validImages[nextIdx].image_path);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose, validImages, currentImgIndex]);
 
   return (
     <AnimatePresence>
@@ -116,16 +142,39 @@ export default function GlassProjectModal({ project, onClose }) {
                 </h2>
               </div>
 
-              {/* Main Screenshot Display */}
-              <div className="mb-4 overflow-hidden rounded-2xl border border-white/60 dark:border-white/10 bg-white/40 dark:bg-slate-800/40 backdrop-blur-md">
+              {/* Main Screenshot Display with Left / Right Navigation */}
+              <div className="mb-4 overflow-hidden rounded-2xl border border-white/60 dark:border-white/10 bg-white/40 dark:bg-slate-800/40 backdrop-blur-md relative">
                 {activeMainImg ? (
-                  <div className="relative aspect-video w-full overflow-hidden bg-slate-950/40">
+                  <div className="relative aspect-video w-full overflow-hidden bg-slate-950/40 group">
                     <img
                       src={activeMainImg}
                       alt={project.title}
                       onError={() => handleImageError(activeMainImg)}
                       className="h-full w-full object-cover"
                     />
+
+                    {/* Left and Right Slide Arrows */}
+                    {validImages.length > 1 && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={handlePrevImage}
+                          className="absolute left-3 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-slate-950/60 text-white backdrop-blur-md border border-white/20 hover:bg-cyan-500 hover:border-cyan-400 transition-all shadow-lg"
+                          aria-label="Previous image"
+                        >
+                          <ChevronLeft className="h-6 w-6" />
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={handleNextImage}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-slate-950/60 text-white backdrop-blur-md border border-white/20 hover:bg-cyan-500 hover:border-cyan-400 transition-all shadow-lg"
+                          aria-label="Next image"
+                        >
+                          <ChevronRight className="h-6 w-6" />
+                        </button>
+                      </>
+                    )}
                   </div>
                 ) : (
                   <div className="flex aspect-video w-full flex-col items-center justify-center gap-2 text-slate-400 py-12">
