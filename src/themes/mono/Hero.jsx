@@ -5,9 +5,15 @@ import { SocialIcon } from '../../components/Icons';
 export default function Hero({ profile, settings, socialLinks }) {
   const name = profile?.name || settings?.site_name || 'Asfar Khan';
 
+  const secondaryRolesList = Array.isArray(profile?.secondary_roles)
+    ? profile.secondary_roles
+    : (typeof profile?.secondary_roles === 'string' && profile.secondary_roles.trim()
+      ? profile.secondary_roles.split(',').map(s => s.trim()).filter(Boolean)
+      : []);
+
   const roles = [
     profile?.primary_role,
-    ...(Array.isArray(profile?.secondary_roles) ? profile.secondary_roles : []),
+    ...secondaryRolesList
   ].filter(Boolean);
 
   const tagline = roles.length > 0

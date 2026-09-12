@@ -59,6 +59,36 @@ function TypedCodeLine({ line, delay, prefersReducedMotion }) {
 export default function Hero({ profile, settings, socialLinks = [] }) {
   const prefersReducedMotion = useReducedMotion();
 
+  const formatSnake = (str) => {
+    if (!str) return '';
+    return str.trim().toLowerCase().replace(/[^a-z0-9]+/gi, '_').replace(/^_+|_+$/g, '');
+  };
+
+  const primaryRoleVal = profile?.primary_role
+    ? `"${formatSnake(profile.primary_role)}"`
+    : '"python_developer"';
+
+  const secondaryRolesList = Array.isArray(profile?.secondary_roles)
+    ? profile.secondary_roles
+    : (typeof profile?.secondary_roles === 'string' && profile.secondary_roles.trim()
+      ? profile.secondary_roles.split(',').map(s => s.trim()).filter(Boolean)
+      : []);
+
+  const secondaryRolesVal = secondaryRolesList.length > 0
+    ? `[${secondaryRolesList.map(r => `"${formatSnake(r)}"`).join(', ')}]`
+    : null;
+
+  const dynamicCodeLines = [
+    { prefix: '>', key: 'role', value: primaryRoleVal, color: 'text-amber-300' },
+    ...(secondaryRolesVal
+      ? [{ prefix: '>', key: 'secondary_roles', value: secondaryRolesVal, color: 'text-amber-300' }]
+      : []),
+    { prefix: '>', key: 'ai_automation', value: 'true', color: 'text-blue-400' },
+    { prefix: '>', key: 'backend', value: '["laravel", "rest_api", "mysql"]', color: 'text-amber-300' },
+    { prefix: '>', key: 'browser', value: '["chrome_extensions"]', color: 'text-amber-300' },
+    { prefix: '>', key: 'status', value: '"open_to_opportunities"', color: 'text-emerald-400' },
+  ];
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { duration: 0.5, staggerChildren: 0.15 } }
@@ -172,7 +202,7 @@ export default function Hero({ profile, settings, socialLinks = [] }) {
 
                 {/* Code content */}
                 <div className="p-6 font-mono text-sm leading-loose">
-                  {codeLines.map((line, i) => (
+                  {dynamicCodeLines.map((line, i) => (
                     <TypedCodeLine
                       key={line.key}
                       line={line}
