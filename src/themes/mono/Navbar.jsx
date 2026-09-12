@@ -77,11 +77,21 @@ export default function Navbar({ profile, settings, onNavigate, currentTheme, on
       return;
     }
 
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
     setIsOpen(false);
+
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) {
+        const navHeight = 70;
+        const elementPosition = el.getBoundingClientRect().top + window.pageYOffset;
+        const offsetPosition = elementPosition - navHeight;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
+    }, 100);
   };
 
   return (
