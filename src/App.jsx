@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import ThemeRenderer from './themes/ThemeRenderer';
 import MaintenanceMode from './components/MaintenanceMode';
+import Preloader from './components/Preloader';
 import { API_BASE_URL, fetchAPI } from './config/api';
 
 export default function App() {
@@ -8,16 +9,37 @@ export default function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // 1. Instant load from sessionStorage cache if available for fast reload
+    const cachedData = sessionStorage.getItem('portfolio_cache');
+    if (cachedData) {
+      try {
+        const parsed = JSON.parse(cachedData);
+        if (parsed && parsed.profile) {
+          setData(parsed);
+          setLoading(false);
+        }
+      } catch (e) {
+        // ignore JSON parse error
+      }
+    }
+
+    // 2. Safety timeout: max 2.5s loading screen so user is never stuck on cold starts
+    const safetyTimer = setTimeout(() => {
+      setLoading(false);
+    }, 2500);
+
+    // 3. Fetch fresh API data
     Promise.all([
-      fetchAPI('/profile').then(res => res.json()),
-      fetchAPI('/skills').then(res => res.json()),
-      fetchAPI('/projects').then(res => res.json()),
-      fetchAPI('/experience').then(res => res.json()),
-      fetchAPI('/social-links').then(res => res.json()),
-      fetchAPI('/contact-settings').then(res => res.json()),
+      fetchAPI('/profile').then(res => res.json()).catch(() => ({ data: null })),
+      fetchAPI('/skills').then(res => res.json()).catch(() => ({ data: null })),
+      fetchAPI('/projects').then(res => res.json()).catch(() => ({ data: null })),
+      fetchAPI('/experience').then(res => res.json()).catch(() => ({ data: null })),
+      fetchAPI('/social-links').then(res => res.json()).catch(() => ({ data: [] })),
+      fetchAPI('/contact-settings').then(res => res.json()).catch(() => ({ data: null })),
       fetchAPI('/posts').then(res => res.json()).catch(() => ({ data: [] })),
       fetchAPI('/settings').then(res => res.json()).catch(() => ({ data: null }))
     ]).then(([profileRes, skillsRes, projectsRes, expRes, socialRes, contactSettingsRes, postsRes, settingsRes]) => {
+      clearTimeout(safetyTimer);
       const siteSettings = settingsRes?.data || null;
 
       if (siteSettings) {
@@ -71,19 +93,23 @@ export default function App() {
         }
       }
 
-      setData({
-        profile: profileRes.data,
-        skills: skillsRes.data,
-        projects: projectsRes.data,
-        experience: expRes.data,
-        socialLinks: socialRes.data || [],
-        contactSettings: contactSettingsRes.data || null,
-        posts: postsRes.data || [],
+      const freshData = {
+        profile: profileRes?.data || null,
+        skills: skillsRes?.data || null,
+        projects: projectsRes?.data || null,
+        experience: expRes?.data || null,
+        socialLinks: socialRes?.data || [],
+        contactSettings: contactSettingsRes?.data || null,
+        posts: postsRes?.data || [],
         settings: siteSettings
-      });
+      };
+
+      setData(freshData);
+      sessionStorage.setItem('portfolio_cache', JSON.stringify(freshData));
       setLoading(false);
     }).catch(err => {
       console.error("API error, falling back to static data", err);
+      clearTimeout(safetyTimer);
       document.documentElement.setAttribute('data-theme', 'modern');
       setLoading(false);
     });
@@ -97,7 +123,7 @@ export default function App() {
   };
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center bg-slate-950 text-white font-medium">Loading portfolio...</div>;
+    return <Preloader />;
   }
 
   const isMaintenanceMode = data.settings?.maintenance_mode === '1' || data.settings?.maintenance_mode === 'true' || data.settings?.maintenance_mode === true;
