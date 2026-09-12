@@ -7,12 +7,13 @@ import Button from './Button';
 
 export default function ProjectModal({ project, onClose }) {
   const [selectedImg, setSelectedImg] = useState(null);
+  const [failedImages, setFailedImages] = useState({});
 
-  // Lock body scroll
   useEffect(() => {
     if (project) {
       document.body.style.overflow = 'hidden';
       setSelectedImg(null);
+      setFailedImages({});
     } else {
       document.body.style.overflow = '';
     }
@@ -21,7 +22,6 @@ export default function ProjectModal({ project, onClose }) {
     };
   }, [project]);
 
-  // Close on Escape
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') onClose();
@@ -32,7 +32,10 @@ export default function ProjectModal({ project, onClose }) {
 
   if (!project) return null;
 
-  // Process Architecture if string (e.g. "A -> B -> C")
+  const handleImageError = (imgKey) => {
+    setFailedImages((prev) => ({ ...prev, [imgKey]: true }));
+  };
+
   let archLayers = [];
   if (typeof project.architecture === 'string' && project.architecture.trim().length > 0) {
     archLayers = project.architecture.split('->').map((step) => ({ label: step.trim() }));
@@ -42,7 +45,22 @@ export default function ProjectModal({ project, onClose }) {
 
   const whatILearned = project.what_i_learned || project.whatILearned;
   const projectImages = project.images || [];
-  const activeMainImg = selectedImg || project.cover_image || (projectImages.length > 0 ? projectImages[0].image_path : null);
+  const rawAllImages = [];
+
+  if (project.cover_image) {
+    rawAllImages.push({ id: 'cover', image_path: project.cover_image });
+  }
+  if (projectImages.length > 0) {
+    projectImages.forEach((img, idx) => {
+      if (img.image_path !== project.cover_image) {
+        rawAllImages.push({ id: img.id || `gallery-${idx}`, image_path: img.image_path });
+      }
+    });
+  }
+
+  const validImages = rawAllImages.filter((img) => !failedImages[img.image_path]);
+  const rawActiveImg = selectedImg || (validImages.length > 0 ? validImages[0].image_path : null);
+  const activeMainImg = rawActiveImg && !failedImages[rawActiveImg] ? rawActiveImg : (validImages[0]?.image_path || null);
 
   return (
     <AnimatePresence>
@@ -105,29 +123,35 @@ export default function ProjectModal({ project, onClose }) {
                       <img
                         src={activeMainImg}
                         alt={project.title}
+                        onError={() => handleImageError(activeMainImg)}
                         className="h-full w-full object-contain"
                       />
                     </div>
-                    {projectImages.length > 1 && (
+                    {validImages.length > 1 && (
                       <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
-                        {projectImages.map((img, idx) => (
+                        {validImages.map((img, idx) => (
                           <button
                             key={img.id || idx}
                             type="button"
                             onClick={() => setSelectedImg(img.image_path)}
                             className={`aspect-video overflow-hidden rounded-md border-2 transition-all ${activeMainImg === img.image_path ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-transparent opacity-70 hover:opacity-100'}`}
                           >
-                            <img src={img.image_path} alt="Thumbnail" className="h-full w-full object-cover" />
+                            <img
+                              src={img.image_path}
+                              alt="Thumbnail"
+                              onError={() => handleImageError(img.image_path)}
+                              className="h-full w-full object-cover"
+                            />
                           </button>
                         ))}
                       </div>
                     )}
                   </div>
                 ) : (
-                  <div className="flex aspect-video items-center justify-center">
+                  <div className="flex aspect-video items-center justify-center py-12">
                     <div className="flex flex-col items-center gap-2">
                       <ImageIcon className="h-10 w-10 text-slate-400 dark:text-slate-600" />
-                      <span className="text-sm text-slate-400 dark:text-slate-600">
+                      <span className="text-sm font-medium text-slate-400 dark:text-slate-600">
                         Project Showcase
                       </span>
                     </div>

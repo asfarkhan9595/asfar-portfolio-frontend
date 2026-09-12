@@ -6,11 +6,13 @@ import ArchitectureDiagram from '../../components/ArchitectureDiagram';
 
 export default function GlassProjectModal({ project, onClose }) {
   const [selectedImg, setSelectedImg] = useState(null);
+  const [failedImages, setFailedImages] = useState({});
 
   useEffect(() => {
     if (project) {
       document.body.style.overflow = 'hidden';
       setSelectedImg(null);
+      setFailedImages({});
     } else {
       document.body.style.overflow = '';
     }
@@ -29,6 +31,10 @@ export default function GlassProjectModal({ project, onClose }) {
 
   if (!project) return null;
 
+  const handleImageError = (imgKey) => {
+    setFailedImages((prev) => ({ ...prev, [imgKey]: true }));
+  };
+
   let archLayers = [];
   if (typeof project.architecture === 'string' && project.architecture.trim().length > 0) {
     archLayers = project.architecture.split('->').map((step) => ({ label: step.trim() }));
@@ -38,18 +44,24 @@ export default function GlassProjectModal({ project, onClose }) {
 
   const whatILearned = project.what_i_learned || project.whatILearned;
   const projectImages = project.images || [];
-  const allImages = [];
+  const rawAllImages = [];
+
   if (project.cover_image) {
-    allImages.push({ id: 'cover', image_path: project.cover_image });
+    rawAllImages.push({ id: 'cover', image_path: project.cover_image });
   }
   if (projectImages.length > 0) {
     projectImages.forEach((img, idx) => {
       if (img.image_path !== project.cover_image) {
-        allImages.push({ id: img.id || idx, image_path: img.image_path });
+        rawAllImages.push({ id: img.id || `gallery-${idx}`, image_path: img.image_path });
       }
     });
   }
-  const activeMainImg = selectedImg || (allImages.length > 0 ? allImages[0].image_path : null);
+
+  // Filter out broken / failed images
+  const validImages = rawAllImages.filter((img) => !failedImages[img.image_path]);
+
+  const rawActiveImg = selectedImg || (validImages.length > 0 ? validImages[0].image_path : null);
+  const activeMainImg = rawActiveImg && !failedImages[rawActiveImg] ? rawActiveImg : (validImages[0]?.image_path || null);
 
   return (
     <AnimatePresence>
@@ -107,25 +119,26 @@ export default function GlassProjectModal({ project, onClose }) {
               {/* Main Screenshot Display */}
               <div className="mb-4 overflow-hidden rounded-2xl border border-white/60 dark:border-white/10 bg-white/40 dark:bg-slate-800/40 backdrop-blur-md">
                 {activeMainImg ? (
-                  <div className="relative aspect-video w-full overflow-hidden">
+                  <div className="relative aspect-video w-full overflow-hidden bg-slate-950/40">
                     <img
                       src={activeMainImg}
                       alt={project.title}
+                      onError={() => handleImageError(activeMainImg)}
                       className="h-full w-full object-cover"
                     />
                   </div>
                 ) : (
-                  <div className="flex aspect-video w-full flex-col items-center justify-center gap-2 text-slate-400">
+                  <div className="flex aspect-video w-full flex-col items-center justify-center gap-2 text-slate-400 py-12">
                     <ImageIcon className="h-10 w-10 text-cyan-500/50" />
-                    <span className="text-sm">No preview image available</span>
+                    <span className="text-sm font-medium text-slate-500 dark:text-slate-400">Project Screenshot Showcase</span>
                   </div>
                 )}
               </div>
 
               {/* Gallery Thumbnails Selector */}
-              {allImages.length > 1 && (
+              {validImages.length > 1 && (
                 <div className="mb-6 flex gap-2.5 overflow-x-auto pb-2">
-                  {allImages.map((img, idx) => {
+                  {validImages.map((img, idx) => {
                     const isSelected = activeMainImg === img.image_path;
                     return (
                       <button
@@ -141,6 +154,7 @@ export default function GlassProjectModal({ project, onClose }) {
                         <img
                           src={img.image_path}
                           alt={`Thumbnail ${idx + 1}`}
+                          onError={() => handleImageError(img.image_path)}
                           className="h-full w-full object-cover"
                         />
                       </button>
@@ -295,4 +309,3 @@ export default function GlassProjectModal({ project, onClose }) {
     </AnimatePresence>
   );
 }
-

@@ -1,16 +1,18 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ExternalLink, Image as ImageIcon, Terminal, Code } from 'lucide-react';
+import { X, ExternalLink, Image as ImageIcon, Terminal } from 'lucide-react';
 import { GithubIcon } from '../../components/Icons';
 import ArchitectureDiagram from '../../components/ArchitectureDiagram';
 
 export default function MonoProjectModal({ project, onClose }) {
   const [selectedImg, setSelectedImg] = useState(null);
+  const [failedImages, setFailedImages] = useState({});
 
   useEffect(() => {
     if (project) {
       document.body.style.overflow = 'hidden';
       setSelectedImg(null);
+      setFailedImages({});
     } else {
       document.body.style.overflow = '';
     }
@@ -29,6 +31,10 @@ export default function MonoProjectModal({ project, onClose }) {
 
   if (!project) return null;
 
+  const handleImageError = (imgKey) => {
+    setFailedImages((prev) => ({ ...prev, [imgKey]: true }));
+  };
+
   let archLayers = [];
   if (typeof project.architecture === 'string' && project.architecture.trim().length > 0) {
     archLayers = project.architecture.split('->').map((step) => ({ label: step.trim() }));
@@ -38,18 +44,22 @@ export default function MonoProjectModal({ project, onClose }) {
 
   const whatILearned = project.what_i_learned || project.whatILearned;
   const projectImages = project.images || [];
-  const allImages = [];
+  const rawAllImages = [];
+
   if (project.cover_image) {
-    allImages.push({ id: 'cover', image_path: project.cover_image });
+    rawAllImages.push({ id: 'cover', image_path: project.cover_image });
   }
   if (projectImages.length > 0) {
     projectImages.forEach((img, idx) => {
       if (img.image_path !== project.cover_image) {
-        allImages.push({ id: img.id || idx, image_path: img.image_path });
+        rawAllImages.push({ id: img.id || `gallery-${idx}`, image_path: img.image_path });
       }
     });
   }
-  const activeMainImg = selectedImg || (allImages.length > 0 ? allImages[0].image_path : null);
+
+  const validImages = rawAllImages.filter((img) => !failedImages[img.image_path]);
+  const rawActiveImg = selectedImg || (validImages.length > 0 ? validImages[0].image_path : null);
+  const activeMainImg = rawActiveImg && !failedImages[rawActiveImg] ? rawActiveImg : (validImages[0]?.image_path || null);
 
   return (
     <AnimatePresence>
@@ -108,20 +118,21 @@ export default function MonoProjectModal({ project, onClose }) {
                   <img
                     src={activeMainImg}
                     alt={project.title}
+                    onError={() => handleImageError(activeMainImg)}
                     className="h-full w-full object-cover"
                   />
                 </div>
               ) : (
-                <div className="flex aspect-video w-full flex-col items-center justify-center bg-slate-100 dark:bg-[#151821] text-slate-500">
+                <div className="flex aspect-video w-full flex-col items-center justify-center bg-slate-100 dark:bg-[#151821] text-slate-500 py-12">
                   <ImageIcon className="mb-2 h-10 w-10 text-cyan-500/40 dark:text-cyan-400/40" />
-                  <span className="text-xs">// Screenshot Unavailable</span>
+                  <span className="text-xs">// Screenshot Showcase Unavailable</span>
                 </div>
               )}
 
               {/* Gallery Thumbnails */}
-              {allImages.length > 1 && (
+              {validImages.length > 1 && (
                 <div className="flex gap-2 p-3 bg-slate-100/60 dark:bg-[#0F1117] border-t border-slate-200 dark:border-white/10 overflow-x-auto">
-                  {allImages.map((imgObj, i) => (
+                  {validImages.map((imgObj, i) => (
                     <button
                       key={imgObj.id || i}
                       onClick={() => setSelectedImg(imgObj.image_path)}
@@ -131,7 +142,12 @@ export default function MonoProjectModal({ project, onClose }) {
                           : 'border-slate-300 dark:border-white/10 opacity-70 hover:opacity-100'
                       }`}
                     >
-                      <img src={imgObj.image_path} alt="" className="h-full w-full object-cover" />
+                      <img
+                        src={imgObj.image_path}
+                        alt=""
+                        onError={() => handleImageError(imgObj.image_path)}
+                        className="h-full w-full object-cover"
+                      />
                     </button>
                   ))}
                 </div>
@@ -285,4 +301,3 @@ export default function MonoProjectModal({ project, onClose }) {
     </AnimatePresence>
   );
 }
-
